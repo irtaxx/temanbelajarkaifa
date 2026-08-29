@@ -7,9 +7,6 @@ set -e
 echo "==> Menarik update terbaru dari GitHub..."
 git pull origin main
 
-echo "==> Menginstal/memperbarui dependency PHP..."
-composer install --no-dev --optimize-autoloader
-
 echo "==> Menjalankan migrasi database yang belum berjalan..."
 php artisan migrate --force
 

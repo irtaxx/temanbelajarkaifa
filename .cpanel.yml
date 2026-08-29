@@ -1,0 +1,6 @@
+---
+deployment:
+  tasks:
+    - cd /home/USERNAME/temanbelajarkaifa && php artisan migrate --force
+    - cd /home/USERNAME/temanbelajarkaifa && php artisan optimize:clear
+    - cd /home/USERNAME/temanbelajarkaifa && php artisan optimize
