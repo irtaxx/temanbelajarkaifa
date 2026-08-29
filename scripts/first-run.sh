@@ -18,4 +18,7 @@ echo "==> Menyusun cache..."
 php artisan optimize:clear
 php artisan optimize
 
+echo "==> Mengatur izin folder storage..."
+chmod -R 775 storage bootstrap/cache
+
 echo "==> Selesai. Cek halaman login di browser, lalu hapus cron job ini."
