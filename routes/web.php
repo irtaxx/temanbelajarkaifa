@@ -1,0 +1,37 @@
+<?php
+
+use App\Http\Controllers\GuruController;
+use App\Http\Controllers\JadwalController;
+use App\Http\Controllers\KelasController;
+use App\Http\Controllers\PenggajianController;
+use App\Http\Controllers\PresensiController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RateGajiController;
+use Illuminate\Support\Facades\Route;
+
+Route::get('/', function () {
+    return redirect()->route('dashboard');
+});
+
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware('auth')->name('dashboard');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::resource('gurus', GuruController::class)->except('show');
+    Route::resource('kelas', KelasController::class)->except('show');
+    Route::resource('jadwals', JadwalController::class)->except('show');
+    Route::resource('rate-gaji', RateGajiController::class)->except('show');
+
+    Route::get('/presensi', [PresensiController::class, 'index'])->name('presensi.index');
+    Route::post('/presensi', [PresensiController::class, 'store'])->name('presensi.store');
+
+    Route::get('/penggajian', [PenggajianController::class, 'index'])->name('penggajian.index');
+    Route::get('/penggajian/{guru}', [PenggajianController::class, 'detail'])->name('penggajian.detail');
+});
+
+require __DIR__.'/auth.php';
