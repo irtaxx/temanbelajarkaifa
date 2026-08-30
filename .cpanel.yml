@@ -1,6 +1,6 @@
 ---
 deployment:
   tasks:
-    - cd /home/USERNAME/temanbelajarkaifa && php artisan migrate --force
-    - cd /home/USERNAME/temanbelajarkaifa && php artisan optimize:clear
-    - cd /home/USERNAME/temanbelajarkaifa && php artisan optimize
+    - cd /home/USERNAME/temanbelajarkaifa && $(bash scripts/find-php.sh) artisan migrate --force
+    - cd /home/USERNAME/temanbelajarkaifa && $(bash scripts/find-php.sh) artisan optimize:clear
+    - cd /home/USERNAME/temanbelajarkaifa && $(bash scripts/find-php.sh) artisan optimize

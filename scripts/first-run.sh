@@ -5,18 +5,21 @@ set -e
 
 cd "$(dirname "$0")/.."
 
+PHP_BIN="$(bash scripts/find-php.sh)"
+echo "==> Pakai PHP CLI: $PHP_BIN ($($PHP_BIN -v | head -n1))"
+
 echo "==> Generate application key..."
-php artisan key:generate --force
+$PHP_BIN artisan key:generate --force
 
 echo "==> Menjalankan migrasi database..."
-php artisan migrate --force
+$PHP_BIN artisan migrate --force
 
 echo "==> Menghubungkan folder storage publik..."
-[ -L public/storage ] || php artisan storage:link
+[ -L public/storage ] || $PHP_BIN artisan storage:link
 
 echo "==> Menyusun cache..."
-php artisan optimize:clear
-php artisan optimize
+$PHP_BIN artisan optimize:clear
+$PHP_BIN artisan optimize
 
 echo "==> Mengatur izin folder storage..."
 chmod -R 775 storage bootstrap/cache
