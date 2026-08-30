@@ -1,13 +1,19 @@
 @php
-    $navItems = [
-        ['route' => 'dashboard', 'pattern' => ['dashboard'], 'label' => 'Dashboard', 'icon' => 'dash', 'color' => '#5B7BE0'],
-        ['route' => 'presensi.index', 'pattern' => ['presensi.*'], 'label' => 'Presensi', 'icon' => 'check', 'color' => '#E24B3A'],
-        ['route' => 'jadwals.index', 'pattern' => ['jadwals.*'], 'label' => 'Jadwal', 'icon' => 'cal', 'color' => '#EF8A1E'],
-        ['route' => 'gurus.index', 'pattern' => ['gurus.*'], 'label' => 'Guru', 'icon' => 'user', 'color' => '#2AA152'],
-        ['route' => 'kelas.index', 'pattern' => ['kelas.*'], 'label' => 'Kelas', 'icon' => 'book', 'color' => '#28A9D6'],
-        ['route' => 'penggajian.index', 'pattern' => ['penggajian.*', 'rate-gaji.*'], 'label' => 'Penggajian', 'icon' => 'wallet', 'color' => '#C77CD1'],
+    $navGroups = [
+        'Utama' => [
+            ['route' => 'dashboard', 'pattern' => ['dashboard'], 'label' => 'Dashboard', 'icon' => 'dash', 'color' => '#5B7BE0'],
+            ['route' => 'presensi.index', 'pattern' => ['presensi.*'], 'label' => 'Presensi', 'icon' => 'check', 'color' => '#E24B3A'],
+        ],
+        'Operasional' => [
+            ['route' => 'jadwals.index', 'pattern' => ['jadwals.*'], 'label' => 'Jadwal', 'icon' => 'cal', 'color' => '#EF8A1E'],
+            ['route' => 'gurus.index', 'pattern' => ['gurus.*'], 'label' => 'Guru', 'icon' => 'user', 'color' => '#2AA152'],
+            ['route' => 'kelas.index', 'pattern' => ['kelas.*'], 'label' => 'Kelas', 'icon' => 'book', 'color' => '#28A9D6'],
+        ],
+        'Keuangan' => [
+            ['route' => 'penggajian.index', 'pattern' => ['penggajian.*', 'rate-gaji.*'], 'label' => 'Penggajian', 'icon' => 'wallet', 'color' => '#C77CD1'],
+        ],
     ];
-    $mobileItems = collect($navItems)->reject(fn ($item) => $item['route'] === 'dashboard');
+    $mobileItems = collect($navGroups)->flatten(1)->reject(fn ($item) => $item['route'] === 'dashboard');
 @endphp
 
 {{-- Desktop sidebar --}}
@@ -21,16 +27,21 @@
         .nav-link:hover:not(.nav-link-active) { background: #272319; }
     </style>
 
-    <nav class="flex flex-col gap-1 flex-1">
-        @foreach ($navItems as $item)
-            @php $active = request()->routeIs(...$item['pattern']); @endphp
-            <a href="{{ route($item['route']) }}"
-                class="nav-link flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13.5px] font-medium border-l-[2.5px] transition {{ $active ? 'nav-link-active' : '' }}"
-                style="{{ $active ? 'background:#2C2822;color:#F3EEE5;border-left-color:'.$item['color'].';' : 'color:#9A907F;border-left-color:transparent;' }}"
-            >
-                <x-nav-icon :name="$item['icon']" class="w-[17px] h-[17px] shrink-0" style="color:{{ $item['color'] }}" />
-                {{ $item['label'] }}
-            </a>
+    <nav class="flex flex-col flex-1">
+        @foreach ($navGroups as $groupLabel => $items)
+            <p class="px-3 pt-3 pb-1.5 text-[10px] font-semibold uppercase tracking-wider" style="color:#6B665A;">{{ $groupLabel }}</p>
+            <div class="flex flex-col gap-1 mb-1">
+                @foreach ($items as $item)
+                    @php $active = request()->routeIs(...$item['pattern']); @endphp
+                    <a href="{{ route($item['route']) }}"
+                        class="nav-link flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13.5px] font-medium border-l-[2.5px] transition {{ $active ? 'nav-link-active' : '' }}"
+                        style="{{ $active ? 'background:#2C2822;color:#F3EEE5;border-left-color:'.$item['color'].';' : 'color:#9A907F;border-left-color:transparent;' }}"
+                    >
+                        <x-nav-icon :name="$item['icon']" class="w-[17px] h-[17px] shrink-0" style="color:{{ $item['color'] }}" />
+                        {{ $item['label'] }}
+                    </a>
+                @endforeach
+            </div>
         @endforeach
     </nav>
 
