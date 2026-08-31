@@ -28,11 +28,6 @@ class GuruController extends Controller
         return redirect()->route('gurus.index')->with('status', 'Data guru berhasil ditambahkan.');
     }
 
-    public function edit(Guru $guru)
-    {
-        return view('gurus.edit', compact('guru'));
-    }
-
     public function update(Request $request, Guru $guru)
     {
         $data = $request->validate([

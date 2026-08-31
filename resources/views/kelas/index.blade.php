@@ -69,7 +69,7 @@
                                     <td class="px-4 py-2.5 text-gray-600 tabular-nums">{{ $k->tahun_ajar }}</td>
                                     <td class="px-4 py-2.5 text-right text-gray-600 tabular-nums">{{ $k->jumlah_siswa }}</td>
                                     <td class="px-4 py-2.5 text-right space-x-2 whitespace-nowrap">
-                                        <a href="{{ route('kelas.edit', $k) }}" class="text-indigo-600 hover:underline">Edit</a>
+                                        <button type="button" x-data x-on:click="$dispatch('open-modal', 'edit-kelas-{{ $k->id }}')" class="text-indigo-600 hover:underline">Edit</button>
                                         <form action="{{ route('kelas.destroy', $k) }}" method="POST" class="inline" onsubmit="return confirm('Hapus kelas {{ $k->nama_kelas }}?');">
                                             @csrf @method('DELETE')
                                             <button type="submit" class="text-red-600 hover:underline">Hapus</button>
@@ -91,6 +91,12 @@
     </div>
 
     <x-form-modal name="tambah-kelas" title="Tambah Kelas" :action="route('kelas.store')">
-        @include('kelas._form', ['kelas' => null])
+        @include('kelas._form', ['kelas' => null, 'modalName' => 'tambah-kelas'])
     </x-form-modal>
+
+    @foreach ($kelas as $k)
+        <x-form-modal :name="'edit-kelas-'.$k->id" title="Edit Kelas" :action="route('kelas.update', $k)" method="PUT">
+            @include('kelas._form', ['kelas' => $k, 'modalName' => 'edit-kelas-'.$k->id])
+        </x-form-modal>
+    @endforeach
 </x-app-layout>

@@ -38,11 +38,6 @@ class KelasController extends Controller
         return redirect()->route('kelas.index')->with('status', 'Data kelas berhasil ditambahkan.');
     }
 
-    public function edit(Kelas $kelas)
-    {
-        return view('kelas.edit', compact('kelas'));
-    }
-
     public function update(Request $request, Kelas $kelas)
     {
         $kelas->update($this->validated($request));

@@ -42,7 +42,7 @@
                                     </td>
                                     <td class="px-4 py-2.5 text-gray-600">{{ $j->mapel ?? '-' }}</td>
                                     <td class="px-4 py-2.5 text-right space-x-2 whitespace-nowrap">
-                                        <a href="{{ route('jadwals.edit', $j) }}" class="text-indigo-600 hover:underline">Edit</a>
+                                        <button type="button" x-data x-on:click="$dispatch('open-modal', 'edit-jadwal-{{ $j->id }}')" class="text-indigo-600 hover:underline">Edit</button>
                                         <form action="{{ route('jadwals.destroy', $j) }}" method="POST" class="inline" onsubmit="return confirm('Hapus jadwal ini?');">
                                             @csrf @method('DELETE')
                                             <button type="submit" class="text-red-600 hover:underline">Hapus</button>
@@ -64,6 +64,12 @@
     </div>
 
     <x-form-modal name="tambah-jadwal" title="Tambah Jadwal" :action="route('jadwals.store')" max-width="xl">
-        @include('jadwals._form', ['jadwal' => null])
+        @include('jadwals._form', ['jadwal' => null, 'modalName' => 'tambah-jadwal'])
     </x-form-modal>
+
+    @foreach ($jadwals as $j)
+        <x-form-modal :name="'edit-jadwal-'.$j->id" title="Edit Jadwal" :action="route('jadwals.update', $j)" method="PUT" max-width="xl">
+            @include('jadwals._form', ['jadwal' => $j, 'modalName' => 'edit-jadwal-'.$j->id])
+        </x-form-modal>
+    @endforeach
 </x-app-layout>

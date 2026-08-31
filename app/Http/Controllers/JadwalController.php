@@ -29,14 +29,6 @@ class JadwalController extends Controller
         return redirect()->route('jadwals.index')->with('status', 'Jadwal berhasil ditambahkan.');
     }
 
-    public function edit(Jadwal $jadwal)
-    {
-        return view('jadwals.edit', array_merge(
-            compact('jadwal'),
-            $this->opsiForm()
-        ));
-    }
-
     public function update(Request $request, Jadwal $jadwal)
     {
         $jadwal->update($this->validated($request));

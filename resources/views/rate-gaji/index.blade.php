@@ -39,7 +39,7 @@
                                     <td class="px-4 py-2.5 text-gray-600 tabular-nums">{{ $rate->min_siswa }}–{{ $rate->max_siswa }} siswa</td>
                                     <td class="px-4 py-2.5 text-right text-gray-900 tabular-nums">Rp{{ number_format($rate->rate_per_sesi, 0, ',', '.') }}</td>
                                     <td class="px-4 py-2.5 text-right space-x-2 whitespace-nowrap">
-                                        <a href="{{ route('rate-gaji.edit', $rate) }}" class="text-indigo-600 hover:underline">Edit</a>
+                                        <button type="button" x-data x-on:click="$dispatch('open-modal', 'edit-rate-{{ $rate->id }}')" class="text-indigo-600 hover:underline">Edit</button>
                                         <form action="{{ route('rate-gaji.destroy', $rate) }}" method="POST" class="inline" onsubmit="return confirm('Hapus rate ini?');">
                                             @csrf @method('DELETE')
                                             <button type="submit" class="text-red-600 hover:underline">Hapus</button>
@@ -59,6 +59,12 @@
     </div>
 
     <x-form-modal name="tambah-rate" title="Tambah Rate Gaji" :action="route('rate-gaji.store')">
-        @include('rate-gaji._form', ['rate' => null])
+        @include('rate-gaji._form', ['rate' => null, 'modalName' => 'tambah-rate'])
     </x-form-modal>
+
+    @foreach ($rates as $rate)
+        <x-form-modal :name="'edit-rate-'.$rate->id" title="Edit Rate Gaji" :action="route('rate-gaji.update', $rate)" method="PUT">
+            @include('rate-gaji._form', ['rate' => $rate, 'modalName' => 'edit-rate-'.$rate->id])
+        </x-form-modal>
+    @endforeach
 </x-app-layout>

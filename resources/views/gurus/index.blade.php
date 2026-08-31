@@ -41,7 +41,7 @@
                                         ])>{{ ucfirst($guru->status) }}</span>
                                     </td>
                                     <td class="px-4 py-2.5 text-right space-x-2 whitespace-nowrap">
-                                        <a href="{{ route('gurus.edit', $guru) }}" class="text-indigo-600 hover:underline">Edit</a>
+                                        <button type="button" x-data x-on:click="$dispatch('open-modal', 'edit-guru-{{ $guru->id }}')" class="text-indigo-600 hover:underline">Edit</button>
                                         <form action="{{ route('gurus.destroy', $guru) }}" method="POST" class="inline" onsubmit="return confirm('Hapus data guru {{ $guru->nama }}?');">
                                             @csrf @method('DELETE')
                                             <button type="submit" class="text-red-600 hover:underline">Hapus</button>
@@ -63,6 +63,12 @@
     </div>
 
     <x-form-modal name="tambah-guru" title="Tambah Guru" :action="route('gurus.store')">
-        @include('gurus._form', ['guru' => null])
+        @include('gurus._form', ['guru' => null, 'modalName' => 'tambah-guru'])
     </x-form-modal>
+
+    @foreach ($gurus as $guru)
+        <x-form-modal :name="'edit-guru-'.$guru->id" title="Edit Guru" :action="route('gurus.update', $guru)" method="PUT">
+            @include('gurus._form', ['guru' => $guru, 'modalName' => 'edit-guru-'.$guru->id])
+        </x-form-modal>
+    @endforeach
 </x-app-layout>

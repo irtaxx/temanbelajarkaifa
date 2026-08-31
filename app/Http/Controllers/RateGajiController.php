@@ -23,11 +23,6 @@ class RateGajiController extends Controller
         return redirect()->route('rate-gaji.index')->with('status', 'Rate gaji berhasil ditambahkan.');
     }
 
-    public function edit(RateGaji $rateGaji)
-    {
-        return view('rate-gaji.edit', ['rate' => $rateGaji]);
-    }
-
     public function update(Request $request, RateGaji $rateGaji)
     {
         $data = $this->validated($request);

@@ -21,11 +21,19 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Form tambah data memakai modal di halaman index, jadi route "create" tidak dipakai.
-    Route::resource('gurus', GuruController::class)->except(['show', 'create']);
-    Route::resource('kelas', KelasController::class)->except(['show', 'create']);
-    Route::resource('jadwals', JadwalController::class)->except(['show', 'create']);
-    Route::resource('rate-gaji', RateGajiController::class)->except(['show', 'create']);
+    // Form tambah & edit memakai modal di halaman index,
+    // jadi route "create" dan "edit" tidak dipakai.
+    // parameters() dipakai pada kelas & rate-gaji karena penunggalan otomatis Laravel
+    // menghasilkan {kela} dan {rate_gaji}, tidak cocok dengan nama argumen controller
+    // ($kelas dan $rateGaji), sehingga route model binding gagal tanpa pesan error.
+    Route::resource('gurus', GuruController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::resource('kelas', KelasController::class)
+        ->parameters(['kelas' => 'kelas'])
+        ->only(['index', 'store', 'update', 'destroy']);
+    Route::resource('jadwals', JadwalController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::resource('rate-gaji', RateGajiController::class)
+        ->parameters(['rate-gaji' => 'rateGaji'])
+        ->only(['index', 'store', 'update', 'destroy']);
 
     Route::get('/presensi', [PresensiController::class, 'index'])->name('presensi.index');
     Route::post('/presensi', [PresensiController::class, 'store'])->name('presensi.store');
