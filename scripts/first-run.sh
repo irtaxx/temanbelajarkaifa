@@ -21,6 +21,9 @@ echo "==> Menyusun cache..."
 $PHP_BIN artisan optimize:clear
 $PHP_BIN artisan optimize
 
+echo "==> Menyalin aset statis ke public_html..."
+bash scripts/sync-public.sh
+
 echo "==> Mengatur izin folder storage..."
 chmod -R 775 storage bootstrap/cache
 

@@ -1,13 +1,13 @@
-@props(['class' => 'h-14'])
+@props(['class' => 'w-52'])
 
 @php
     $logoPath = public_path('images/logo-kaifa.png');
 @endphp
 
 @if (file_exists($logoPath))
-    <img src="{{ asset('images/logo-kaifa.png') }}" alt="Teman Belajar Kaifa" class="{{ $class }} w-auto">
+    <img src="{{ asset('images/logo-kaifa.png') }}" alt="Teman Belajar Kaifa" class="{{ $class }} h-auto">
 @else
-    {{-- Fallback selama file logo belum diunggah ke public/images/logo-kaifa.png --}}
+    {{-- Fallback selama file logo belum ada di public/images/logo-kaifa.png --}}
     <div class="flex items-center gap-2.5">
         <x-application-logo class="w-11 h-11" />
         <div>

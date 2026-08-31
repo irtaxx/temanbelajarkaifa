@@ -1,4 +1,5 @@
 @php
+    $markPath = public_path('images/logo-kaifa-mark.png');
     $petals = [
         ['angle' => 0, 'color' => '#E24B3A'],
         ['angle' => 45, 'color' => '#EF8A1E'],
@@ -11,11 +12,16 @@
     ];
 @endphp
 
-<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" {{ $attributes }}>
-    @foreach ($petals as $petal)
-        <g transform="rotate({{ $petal['angle'] }} 50 50)">
-            <rect x="46.5" y="10" width="7" height="26" rx="3.5" fill="{{ $petal['color'] }}" />
-            <circle cx="50" cy="5" r="3.4" fill="{{ $petal['color'] }}" />
-        </g>
-    @endforeach
-</svg>
+@if (file_exists($markPath))
+    <img src="{{ asset('images/logo-kaifa-mark.png') }}" alt="Kaifa" {{ $attributes }}>
+@else
+    {{-- Fallback bila file mark belum ada --}}
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" {{ $attributes }}>
+        @foreach ($petals as $petal)
+            <g transform="rotate({{ $petal['angle'] }} 50 50)">
+                <rect x="46.5" y="10" width="7" height="26" rx="3.5" fill="{{ $petal['color'] }}" />
+                <circle cx="50" cy="5" r="3.4" fill="{{ $petal['color'] }}" />
+            </g>
+        @endforeach
+    </svg>
+@endif

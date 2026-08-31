@@ -16,4 +16,7 @@ echo "==> Membersihkan dan menyusun ulang cache..."
 $PHP_BIN artisan optimize:clear
 $PHP_BIN artisan optimize
 
+echo "==> Menyalin aset statis ke public_html..."
+bash scripts/sync-public.sh
+
 echo "==> Selesai! Aplikasi sudah pakai kode terbaru."

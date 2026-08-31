@@ -7,6 +7,9 @@
 
         <title>{{ config('app.name', 'Laravel') }}</title>
 
+        <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
+        <link rel="apple-touch-icon" href="{{ asset('images/apple-touch-icon.png') }}">
+
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -37,7 +40,7 @@
         <div class="min-h-screen flex flex-col justify-center items-center px-4 py-10">
             <div class="w-full sm:max-w-md">
                 <div class="flex justify-center mb-7">
-                    <x-brand-lockup class="h-14" />
+                    <x-brand-lockup class="w-52" />
                 </div>
 
                 <div class="bg-white border border-gray-100 shadow-sm rounded-2xl px-7 py-7">

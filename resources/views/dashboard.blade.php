@@ -5,9 +5,10 @@
                 <h2 class="font-semibold text-xl text-gray-800 leading-tight">Dashboard</h2>
                 <p class="text-sm text-gray-500 mt-0.5">Selamat datang kembali, {{ auth()->user()->name }}.</p>
             </div>
-            <a href="{{ route('presensi.index') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-800 text-white text-sm font-medium rounded-md hover:bg-gray-700">
+            <a href="{{ route('presensi.index') }}" class="inline-flex items-center gap-2 shrink-0 px-4 py-2 bg-gray-800 text-white text-sm font-medium rounded-lg hover:bg-gray-700 whitespace-nowrap">
                 <x-nav-icon name="check" class="w-4 h-4" />
-                Presensi hari ini
+                <span class="hidden sm:inline">Presensi hari ini</span>
+                <span class="sm:hidden">Presensi</span>
             </a>
         </div>
     </x-slot>
