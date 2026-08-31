@@ -5,8 +5,8 @@
         </h2>
     </x-slot>
 
-    <div class="py-6">
-        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
+    <div class="py-5 px-5 lg:px-7">
+        <div>
             <a href="{{ route('penggajian.index', ['bulan' => $bulan, 'tahun' => $tahun]) }}" class="text-sm text-indigo-600 hover:underline">&larr; Kembali ke rekap</a>
 
             <div class="bg-white shadow-sm sm:rounded-lg overflow-hidden mt-4">

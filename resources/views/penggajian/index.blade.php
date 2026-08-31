@@ -6,8 +6,8 @@
         </div>
     </x-slot>
 
-    <div class="py-6">
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+    <div class="py-5 px-5 lg:px-7">
+        <div>
             <form method="GET" action="{{ route('penggajian.index') }}" class="mb-4 flex items-end gap-3 bg-white shadow-sm rounded-lg p-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Bulan</label>

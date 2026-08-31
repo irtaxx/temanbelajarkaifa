@@ -12,8 +12,8 @@
         </div>
     </x-slot>
 
-    <div class="py-4">
-        <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
+    <div class="py-5 px-5 lg:px-7">
+        <div>
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
                 <div class="bg-white border border-gray-100 rounded-xl p-3.5">
                     <div class="flex justify-between items-start mb-2">

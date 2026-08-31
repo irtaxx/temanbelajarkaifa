@@ -19,6 +19,25 @@
             [x-cloak]{display:none!important}
             body{font-family:'Inter',ui-sans-serif,system-ui,sans-serif;}
             h1,h2,h3,h4,.font-display{font-family:'Plus Jakarta Sans',ui-sans-serif,sans-serif;}
+            input[type="text"],input[type="email"],input[type="password"],input[type="number"],
+            input[type="date"],input[type="time"],input[type="tel"],select,textarea{
+                padding:0.625rem 0.875rem;
+                font-size:0.875rem;
+                line-height:1.25rem;
+                border-radius:0.5rem;
+                border-width:1px;
+                border-style:solid;
+                border-color:#D1D5DB;
+                background-color:#fff;
+                width:100%;
+            }
+            select{padding-right:2.25rem;}
+            input[type="checkbox"]{border-width:1px;border-style:solid;border-color:#D1D5DB;}
+            input:focus,select:focus,textarea:focus{
+                outline:none;
+                border-color:#6366F1;
+                box-shadow:0 0 0 3px rgba(99,102,241,0.15);
+            }
         </style>
     </head>
     <body class="antialiased" style="background:#FBF9F5;">
@@ -29,7 +48,7 @@
                 <!-- Page Heading -->
                 @isset($header)
                     <header class="bg-white border-b border-gray-100">
-                        <div class="max-w-6xl mx-auto py-5 px-4 sm:px-6 lg:px-8 font-display">
+                        <div class="py-4 px-5 lg:px-7 font-display">
                             {{ $header }}
                         </div>
                     </header>

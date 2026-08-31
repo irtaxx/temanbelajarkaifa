@@ -3,8 +3,8 @@
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">Tambah Jadwal</h2>
     </x-slot>
 
-    <div class="py-6">
-        <div class="max-w-xl mx-auto sm:px-6 lg:px-8">
+    <div class="py-5 px-5 lg:px-7">
+        <div class="max-w-2xl">
             <div class="bg-white shadow-sm sm:rounded-lg p-6">
                 <form action="{{ route('jadwals.store') }}" method="POST" class="space-y-4">
                     @csrf
