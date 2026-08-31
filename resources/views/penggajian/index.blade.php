@@ -8,24 +8,24 @@
 
     <div class="py-5 px-5 lg:px-7">
         <div>
-            <form method="GET" action="{{ route('penggajian.index') }}" class="mb-4 flex items-end gap-3 bg-white shadow-sm rounded-lg p-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Bulan</label>
-                    <select name="bulan" class="mt-1 rounded-md border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+            <form method="GET" action="{{ route('penggajian.index') }}" class="mb-4 flex flex-wrap items-end gap-3 bg-white border border-gray-100 rounded-xl p-4">
+                <div class="w-40">
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Bulan</label>
+                    <select name="bulan" class="border-gray-300 shadow-sm">
                         @foreach (range(1, 12) as $m)
                             <option value="{{ $m }}" @selected($m == $bulan)>{{ \Carbon\Carbon::create()->month($m)->translatedFormat('F') }}</option>
                         @endforeach
                     </select>
                 </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Tahun</label>
-                    <select name="tahun" class="mt-1 rounded-md border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                <div class="w-32">
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Tahun</label>
+                    <select name="tahun" class="border-gray-300 shadow-sm">
                         @foreach (range(now()->year - 2, now()->year + 1) as $y)
                             <option value="{{ $y }}" @selected($y == $tahun)>{{ $y }}</option>
                         @endforeach
                     </select>
                 </div>
-                <button type="submit" class="px-4 py-2 bg-gray-800 text-white text-sm font-medium rounded-md hover:bg-gray-700">Tampilkan</button>
+                <button type="submit" class="px-4 py-2.5 bg-gray-800 text-white text-sm font-medium rounded-lg hover:bg-gray-700">Tampilkan</button>
             </form>
 
             <div class="bg-white shadow-sm sm:rounded-lg overflow-hidden">

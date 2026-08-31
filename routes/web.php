@@ -21,13 +21,15 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::resource('gurus', GuruController::class)->except('show');
-    Route::resource('kelas', KelasController::class)->except('show');
-    Route::resource('jadwals', JadwalController::class)->except('show');
-    Route::resource('rate-gaji', RateGajiController::class)->except('show');
+    // Form tambah data memakai modal di halaman index, jadi route "create" tidak dipakai.
+    Route::resource('gurus', GuruController::class)->except(['show', 'create']);
+    Route::resource('kelas', KelasController::class)->except(['show', 'create']);
+    Route::resource('jadwals', JadwalController::class)->except(['show', 'create']);
+    Route::resource('rate-gaji', RateGajiController::class)->except(['show', 'create']);
 
     Route::get('/presensi', [PresensiController::class, 'index'])->name('presensi.index');
     Route::post('/presensi', [PresensiController::class, 'store'])->name('presensi.store');
+    Route::delete('/presensi/{presensi}', [PresensiController::class, 'destroy'])->name('presensi.destroy');
 
     Route::get('/penggajian', [PenggajianController::class, 'index'])->name('penggajian.index');
     Route::get('/penggajian/{guru}', [PenggajianController::class, 'detail'])->name('penggajian.detail');

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Guru;
 use App\Models\Jadwal;
 use App\Models\Presensi;
 use App\Models\RateGaji;
@@ -20,15 +21,23 @@ class PresensiController extends Controller
         $tanggal = $request->query('tanggal') ?: now()->toDateString();
         $tanggalCarbon = Carbon::parse($tanggal);
         $hari = self::HARI_INDONESIA[$tanggalCarbon->dayOfWeek];
+        $filterGuru = $request->query('guru_id', '');
 
-        $jadwals = Jadwal::with(['guru', 'kelas', 'presensis' => function ($q) use ($tanggal) {
-            $q->where('tanggal', $tanggal);
-        }])
-            ->where('hari', $hari)
+        // Semua jadwal ditampilkan, tidak dibatasi hari terjadwalnya —
+        // admin bebas mencatat sesi yang benar-benar berlangsung pada tanggal mana pun.
+        // Jadwal yang memang terjadwal di hari tersebut ditaruh paling atas.
+        // whereDate dipakai karena kolom tanggal tersimpan dengan komponen jam (00:00:00),
+        // sehingga perbandingan string biasa tidak cocok di SQLite.
+        $jadwals = Jadwal::with(['guru', 'kelas', 'presensis' => fn ($q) => $q->whereDate('tanggal', $tanggal)])
+            ->when($filterGuru !== '', fn ($q) => $q->where('guru_id', $filterGuru))
+            ->orderByRaw('CASE WHEN hari = ? THEN 0 ELSE 1 END', [$hari])
+            ->orderByRaw("CASE hari WHEN 'Senin' THEN 1 WHEN 'Selasa' THEN 2 WHEN 'Rabu' THEN 3 WHEN 'Kamis' THEN 4 WHEN 'Jumat' THEN 5 WHEN 'Sabtu' THEN 6 ELSE 7 END")
             ->orderBy('jam_mulai')
             ->get();
 
-        return view('presensi.index', compact('jadwals', 'tanggal', 'hari'));
+        $gurus = Guru::where('status', 'aktif')->orderBy('nama')->get();
+
+        return view('presensi.index', compact('jadwals', 'tanggal', 'hari', 'gurus', 'filterGuru'));
     }
 
     public function store(Request $request)
@@ -52,7 +61,20 @@ class PresensiController extends Controller
             ['guru_id' => $jadwal->guru_id, 'status' => $data['status'], 'nominal_gaji' => $nominal]
         );
 
-        return redirect()->route('presensi.index', ['tanggal' => $data['tanggal']])
-            ->with('status', 'Presensi tersimpan.');
+        return redirect()->route('presensi.index', array_filter([
+            'tanggal' => $data['tanggal'],
+            'guru_id' => $request->input('guru_id'),
+        ]))->with('status', 'Presensi tersimpan.');
+    }
+
+    public function destroy(Request $request, Presensi $presensi)
+    {
+        $tanggal = $presensi->tanggal->toDateString();
+        $presensi->delete();
+
+        return redirect()->route('presensi.index', array_filter([
+            'tanggal' => $tanggal,
+            'guru_id' => $request->input('guru_id'),
+        ]))->with('status', 'Presensi dibatalkan.');
     }
 }

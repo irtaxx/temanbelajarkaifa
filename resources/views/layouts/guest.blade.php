@@ -18,7 +18,8 @@
         <!-- Scripts -->
         <script src="https://cdn.tailwindcss.com"></script>
         <style>
-            input[type="text"],input[type="email"],input[type="password"]{
+            /* html … agar menang dari preflight Tailwind CDN yang dimuat belakangan */
+            html input[type="text"],html input[type="email"],html input[type="password"]{
                 padding:0.625rem 0.875rem;
                 font-size:0.875rem;
                 line-height:1.25rem;
@@ -28,8 +29,11 @@
                 border-color:#D1D5DB;
                 background-color:#fff;
             }
-            input[type="checkbox"]{border-width:1px;border-style:solid;border-color:#D1D5DB;}
-            input:focus{
+            html input[type="checkbox"]{
+                width:1rem;height:1rem;
+                border-width:1px;border-style:solid;border-color:#D1D5DB;
+            }
+            html input:focus{
                 outline:none;
                 border-color:#6366F1;
                 box-shadow:0 0 0 3px rgba(99,102,241,0.15);

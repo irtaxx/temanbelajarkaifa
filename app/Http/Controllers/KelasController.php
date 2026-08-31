@@ -7,27 +7,33 @@ use Illuminate\Http\Request;
 
 class KelasController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $kelas = Kelas::orderBy('jenjang')->orderBy('nama_kelas')->paginate(15);
+        $filterTahunAjar = $request->query('tahun_ajar', '');
+        $filterSemester = $request->query('semester', '');
 
-        return view('kelas.index', compact('kelas'));
-    }
+        $kelas = Kelas::query()
+            ->when($filterTahunAjar !== '', fn ($q) => $q->where('tahun_ajar', $filterTahunAjar))
+            ->when($filterSemester !== '', fn ($q) => $q->where('semester', $filterSemester))
+            ->orderByDesc('tahun_ajar')
+            ->orderBy('semester')
+            ->orderBy('jenjang')
+            ->orderBy('nama_kelas')
+            ->paginate(15)
+            ->withQueryString();
 
-    public function create()
-    {
-        return view('kelas.create');
+        $daftarTahunAjar = Kelas::query()
+            ->select('tahun_ajar')
+            ->distinct()
+            ->orderByDesc('tahun_ajar')
+            ->pluck('tahun_ajar');
+
+        return view('kelas.index', compact('kelas', 'daftarTahunAjar', 'filterTahunAjar', 'filterSemester'));
     }
 
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'nama_kelas' => ['required', 'string', 'max:255'],
-            'jenjang' => ['required', 'in:SD,SMP,SMA'],
-            'jumlah_siswa' => ['required', 'integer', 'min:0'],
-        ]);
-
-        Kelas::create($data);
+        Kelas::create($this->validated($request));
 
         return redirect()->route('kelas.index')->with('status', 'Data kelas berhasil ditambahkan.');
     }
@@ -39,13 +45,7 @@ class KelasController extends Controller
 
     public function update(Request $request, Kelas $kelas)
     {
-        $data = $request->validate([
-            'nama_kelas' => ['required', 'string', 'max:255'],
-            'jenjang' => ['required', 'in:SD,SMP,SMA'],
-            'jumlah_siswa' => ['required', 'integer', 'min:0'],
-        ]);
-
-        $kelas->update($data);
+        $kelas->update($this->validated($request));
 
         return redirect()->route('kelas.index')->with('status', 'Data kelas berhasil diperbarui.');
     }
@@ -55,5 +55,18 @@ class KelasController extends Controller
         $kelas->delete();
 
         return redirect()->route('kelas.index')->with('status', 'Data kelas berhasil dihapus.');
+    }
+
+    private function validated(Request $request): array
+    {
+        return $request->validate([
+            'nama_kelas' => ['required', 'string', 'max:255'],
+            'jenjang' => ['required', 'in:SD,SMP,SMA'],
+            'semester' => ['required', 'in:Ganjil,Genap'],
+            'tahun_ajar' => ['required', 'string', 'regex:/^\d{4}\/\d{4}$/'],
+            'jumlah_siswa' => ['required', 'integer', 'min:0'],
+        ], [
+            'tahun_ajar.regex' => 'Format tahun ajar harus seperti 2025/2026.',
+        ]);
     }
 }

@@ -14,11 +14,6 @@ class RateGajiController extends Controller
         return view('rate-gaji.index', compact('rates'));
     }
 
-    public function create()
-    {
-        return view('rate-gaji.create');
-    }
-
     public function store(Request $request)
     {
         $data = $this->validated($request);

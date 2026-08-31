@@ -1,0 +1,53 @@
+<?php
+
+return [
+    'required' => ':attribute wajib diisi.',
+    'string' => ':attribute harus berupa teks.',
+    'integer' => ':attribute harus berupa angka.',
+    'numeric' => ':attribute harus berupa angka.',
+    'date' => ':attribute bukan tanggal yang valid.',
+    'date_format' => 'Format :attribute tidak sesuai (:format).',
+    'email' => ':attribute harus berupa alamat email yang valid.',
+    'exists' => ':attribute yang dipilih tidak valid.',
+    'unique' => ':attribute sudah digunakan.',
+    'in' => ':attribute yang dipilih tidak valid.',
+    'regex' => 'Format :attribute tidak sesuai.',
+    'after' => ':attribute harus setelah :date.',
+    'confirmed' => 'Konfirmasi :attribute tidak cocok.',
+    'min' => [
+        'numeric' => ':attribute minimal :min.',
+        'string' => ':attribute minimal :min karakter.',
+    ],
+    'max' => [
+        'numeric' => ':attribute maksimal :max.',
+        'string' => ':attribute maksimal :max karakter.',
+    ],
+    'gte' => [
+        'numeric' => ':attribute harus lebih besar atau sama dengan :value.',
+    ],
+
+    'attributes' => [
+        'nama' => 'Nama',
+        'nama_kelas' => 'Nama kelas',
+        'no_hp' => 'No. HP',
+        'alamat' => 'Alamat',
+        'status' => 'Status',
+        'jenjang' => 'Jenjang',
+        'semester' => 'Semester',
+        'tahun_ajar' => 'Tahun ajar',
+        'jumlah_siswa' => 'Jumlah siswa',
+        'guru_id' => 'Guru',
+        'kelas_id' => 'Kelas',
+        'jadwal_id' => 'Jadwal',
+        'mapel' => 'Mapel',
+        'hari' => 'Hari',
+        'jam_mulai' => 'Jam mulai',
+        'jam_selesai' => 'Jam selesai',
+        'tanggal' => 'Tanggal',
+        'min_siswa' => 'Min siswa',
+        'max_siswa' => 'Max siswa',
+        'rate_per_sesi' => 'Rate per sesi',
+        'email' => 'Email',
+        'password' => 'Password',
+    ],
+];

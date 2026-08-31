@@ -16,39 +16,30 @@ class JadwalController extends Controller
             ->orderBy('jam_mulai')
             ->paginate(20);
 
-        return view('jadwals.index', compact('jadwals'));
-    }
-
-    public function create()
-    {
-        $gurus = Guru::where('status', 'aktif')->orderBy('nama')->get();
-        $kelas = Kelas::orderBy('nama_kelas')->get();
-
-        return view('jadwals.create', compact('gurus', 'kelas'));
+        return view('jadwals.index', array_merge(
+            compact('jadwals'),
+            $this->opsiForm()
+        ));
     }
 
     public function store(Request $request)
     {
-        $data = $this->validated($request);
-
-        Jadwal::create($data);
+        Jadwal::create($this->validated($request));
 
         return redirect()->route('jadwals.index')->with('status', 'Jadwal berhasil ditambahkan.');
     }
 
     public function edit(Jadwal $jadwal)
     {
-        $gurus = Guru::where('status', 'aktif')->orderBy('nama')->get();
-        $kelas = Kelas::orderBy('nama_kelas')->get();
-
-        return view('jadwals.edit', compact('jadwal', 'gurus', 'kelas'));
+        return view('jadwals.edit', array_merge(
+            compact('jadwal'),
+            $this->opsiForm()
+        ));
     }
 
     public function update(Request $request, Jadwal $jadwal)
     {
-        $data = $this->validated($request);
-
-        $jadwal->update($data);
+        $jadwal->update($this->validated($request));
 
         return redirect()->route('jadwals.index')->with('status', 'Jadwal berhasil diperbarui.');
     }
@@ -58,6 +49,14 @@ class JadwalController extends Controller
         $jadwal->delete();
 
         return redirect()->route('jadwals.index')->with('status', 'Jadwal berhasil dihapus.');
+    }
+
+    private function opsiForm(): array
+    {
+        return [
+            'gurus' => Guru::where('status', 'aktif')->orderBy('nama')->get(),
+            'kelas' => Kelas::orderByDesc('tahun_ajar')->orderBy('nama_kelas')->get(),
+        ];
     }
 
     private function validated(Request $request): array

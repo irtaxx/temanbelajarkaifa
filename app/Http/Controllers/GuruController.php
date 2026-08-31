@@ -14,11 +14,6 @@ class GuruController extends Controller
         return view('gurus.index', compact('gurus'));
     }
 
-    public function create()
-    {
-        return view('gurus.create');
-    }
-
     public function store(Request $request)
     {
         $data = $request->validate([
