@@ -80,10 +80,12 @@
                                     <td class="px-4 py-2.5">
                                         <span @class([
                                             'px-2 py-1 rounded-full text-xs font-medium',
-                                            'bg-green-100 text-green-700' => $p->status === 'hadir',
+                                            'bg-green-100 text-green-700' => $p->skenario === 'hadir',
+                                            'bg-indigo-100 text-indigo-700' => $p->skenario === 'gabungan',
+                                            'bg-sky-100 text-sky-700' => $p->skenario === 'siswa_absen',
                                             'bg-yellow-100 text-yellow-700' => in_array($p->status, ['izin', 'sakit']),
                                             'bg-red-100 text-red-700' => $p->status === 'alpha',
-                                        ])>{{ ucfirst($p->status) }}</span>
+                                        ])>{{ \App\Models\Presensi::SKENARIO[$p->skenario]['label'] ?? ucfirst($p->status) }}</span>
                                     </td>
                                     <td class="px-4 py-2.5 text-right text-gray-900">
                                         {{ $p->nominal_gaji ? 'Rp'.number_format($p->nominal_gaji, 0, ',', '.') : '—' }}

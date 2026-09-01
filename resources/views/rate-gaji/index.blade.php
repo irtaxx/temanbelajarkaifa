@@ -21,6 +21,32 @@
                 Rate ditentukan berdasarkan jenjang kelas dan rentang jumlah siswa. Pastikan rentang antar rate tidak tumpang tindih.
             </p>
 
+            <form action="{{ route('rate-gaji.pengaturan') }}" method="POST" class="bg-white border border-gray-100 rounded-xl p-4 mb-4">
+                @csrf
+                <h3 class="text-sm font-semibold text-gray-800 mb-1">Nominal skenario presensi</h3>
+                <p class="text-xs text-gray-500 mb-3">
+                    Dipakai saat menandai presensi. Perubahan hanya berlaku untuk presensi berikutnya —
+                    yang sudah tercatat tetap memakai nominal saat itu.
+                </p>
+                <div class="flex flex-wrap items-end gap-3">
+                    <div class="w-52">
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Bonus kelas gabungan (Rp)</label>
+                        <input type="number" min="0" name="bonus_kelas_gabungan" value="{{ old('bonus_kelas_gabungan', $bonusGabungan) }}" required
+                            class="border-gray-300 shadow-sm">
+                        @error('bonus_kelas_gabungan') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                    </div>
+                    <div class="w-52">
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Siswa tidak masuk (Rp)</label>
+                        <input type="number" min="0" name="nominal_siswa_absen" value="{{ old('nominal_siswa_absen', $nominalSiswaAbsen) }}" required
+                            class="border-gray-300 shadow-sm">
+                        @error('nominal_siswa_absen') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                    </div>
+                    <button type="submit" class="px-4 py-2.5 bg-gray-800 text-white text-sm font-medium rounded-lg hover:bg-gray-700">
+                        Simpan
+                    </button>
+                </div>
+            </form>
+
             <div class="bg-white border border-gray-100 rounded-xl overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="min-w-full text-sm">

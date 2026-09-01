@@ -31,6 +31,7 @@ Route::middleware('auth')->group(function () {
         ->parameters(['kelas' => 'kelas'])
         ->only(['index', 'store', 'update', 'destroy']);
     Route::resource('jadwals', JadwalController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::post('/rate-gaji/pengaturan', [RateGajiController::class, 'simpanPengaturan'])->name('rate-gaji.pengaturan');
     Route::resource('rate-gaji', RateGajiController::class)
         ->parameters(['rate-gaji' => 'rateGaji'])
         ->only(['index', 'store', 'update', 'destroy']);

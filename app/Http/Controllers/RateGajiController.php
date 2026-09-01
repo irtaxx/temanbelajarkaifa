@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Pengaturan;
 use App\Models\RateGaji;
 use Illuminate\Http\Request;
 
@@ -11,7 +12,25 @@ class RateGajiController extends Controller
     {
         $rates = RateGaji::orderBy('jenjang')->orderBy('min_siswa')->get();
 
-        return view('rate-gaji.index', compact('rates'));
+        return view('rate-gaji.index', [
+            'rates' => $rates,
+            'bonusGabungan' => Pengaturan::ambil(Pengaturan::BONUS_KELAS_GABUNGAN),
+            'nominalSiswaAbsen' => Pengaturan::ambil(Pengaturan::NOMINAL_SISWA_ABSEN),
+        ]);
+    }
+
+    public function simpanPengaturan(Request $request)
+    {
+        $data = $request->validate([
+            'bonus_kelas_gabungan' => ['required', 'integer', 'min:0'],
+            'nominal_siswa_absen' => ['required', 'integer', 'min:0'],
+        ]);
+
+        Pengaturan::simpan(Pengaturan::BONUS_KELAS_GABUNGAN, $data['bonus_kelas_gabungan']);
+        Pengaturan::simpan(Pengaturan::NOMINAL_SISWA_ABSEN, $data['nominal_siswa_absen']);
+
+        return redirect()->route('rate-gaji.index')
+            ->with('status', 'Pengaturan nominal berhasil disimpan. Presensi yang sudah tercatat tidak ikut berubah.');
     }
 
     public function store(Request $request)

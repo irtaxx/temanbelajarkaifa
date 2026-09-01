@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Guru;
 use App\Models\Jadwal;
+use App\Models\Pengaturan;
 use App\Models\Presensi;
-use App\Models\RateGaji;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class PresensiController extends Controller
 {
@@ -23,11 +24,12 @@ class PresensiController extends Controller
         $hari = self::HARI_INDONESIA[$tanggalCarbon->dayOfWeek];
         $filterGuru = $request->query('guru_id', '');
 
-        // Semua jadwal ditampilkan, tidak dibatasi hari terjadwalnya —
-        // admin bebas mencatat sesi yang benar-benar berlangsung pada tanggal mana pun.
-        // Jadwal yang memang terjadwal di hari tersebut ditaruh paling atas.
         // whereDate dipakai karena kolom tanggal tersimpan dengan komponen jam (00:00:00),
         // sehingga perbandingan string biasa tidak cocok di SQLite.
+        //
+        // Semua jadwal ditampilkan, tidak dibatasi hari terjadwalnya — admin bebas mencatat
+        // sesi yang benar-benar berlangsung pada tanggal mana pun. Jadwal yang memang
+        // terjadwal di hari tersebut ditaruh paling atas.
         $jadwals = Jadwal::with(['guru', 'kelas', 'presensis' => fn ($q) => $q->whereDate('tanggal', $tanggal)])
             ->when($filterGuru !== '', fn ($q) => $q->where('guru_id', $filterGuru))
             ->orderByRaw('CASE WHEN hari = ? THEN 0 ELSE 1 END', [$hari])
@@ -37,7 +39,15 @@ class PresensiController extends Controller
 
         $gurus = Guru::where('status', 'aktif')->orderBy('nama')->get();
 
-        return view('presensi.index', compact('jadwals', 'tanggal', 'hari', 'gurus', 'filterGuru'));
+        return view('presensi.index', [
+            'jadwals' => $jadwals,
+            'tanggal' => $tanggal,
+            'hari' => $hari,
+            'gurus' => $gurus,
+            'filterGuru' => $filterGuru,
+            'bonusGabungan' => Pengaturan::ambil(Pengaturan::BONUS_KELAS_GABUNGAN),
+            'nominalSiswaAbsen' => Pengaturan::ambil(Pengaturan::NOMINAL_SISWA_ABSEN),
+        ]);
     }
 
     public function store(Request $request)
@@ -45,21 +55,32 @@ class PresensiController extends Controller
         $data = $request->validate([
             'jadwal_id' => ['required', 'exists:jadwals,id'],
             'tanggal' => ['required', 'date'],
-            'status' => ['required', 'in:hadir,izin,sakit,alpha'],
+            'skenario' => ['required', Rule::in(array_keys(Presensi::SKENARIO))],
         ]);
 
         $jadwal = Jadwal::with('kelas')->findOrFail($data['jadwal_id']);
+        $aturan = Presensi::SKENARIO[$data['skenario']];
 
-        $nominal = null;
-        if ($data['status'] === 'hadir') {
-            $rate = RateGaji::cariRate($jadwal->kelas->jenjang, $jadwal->kelas->jumlah_siswa);
-            $nominal = $rate?->rate_per_sesi;
+        $isian = [
+            'guru_id' => $jadwal->guru_id,
+            'status' => $aturan['status'],
+            'siswa_hadir' => $aturan['siswa_hadir'],
+            'kelas_gabungan' => $aturan['kelas_gabungan'],
+            'nominal_gaji' => Presensi::hitungNominal($data['skenario'], $jadwal->kelas),
+        ];
+
+        // updateOrCreate tidak dipakai karena pencocokan kolom tanggal harus lewat
+        // whereDate (lihat Presensi::untukSesi), bukan perbandingan string biasa.
+        $presensi = Presensi::untukSesi($data['jadwal_id'], $data['tanggal']);
+
+        if ($presensi) {
+            $presensi->update($isian);
+        } else {
+            Presensi::create($isian + [
+                'jadwal_id' => $data['jadwal_id'],
+                'tanggal' => $data['tanggal'],
+            ]);
         }
-
-        Presensi::updateOrCreate(
-            ['jadwal_id' => $data['jadwal_id'], 'tanggal' => $data['tanggal']],
-            ['guru_id' => $jadwal->guru_id, 'status' => $data['status'], 'nominal_gaji' => $nominal]
-        );
 
         return redirect()->route('presensi.index', array_filter([
             'tanggal' => $data['tanggal'],
