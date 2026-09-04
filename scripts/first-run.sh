@@ -17,9 +17,10 @@ $PHP_BIN artisan migrate --force
 echo "==> Menghubungkan folder storage publik..."
 [ -L public/storage ] || $PHP_BIN artisan storage:link
 
-echo "==> Menyusun cache..."
+# Hanya dibersihkan, tidak di-cache ulang. Cache route yang basi pernah membuat
+# Edit/Hapus gagal diam-diam, sementara manfaatnya untuk aplikasi sekecil ini tipis.
+echo "==> Membersihkan cache..."
 $PHP_BIN artisan optimize:clear
-$PHP_BIN artisan optimize
 
 echo "==> Menyalin aset statis ke public_html..."
 bash scripts/sync-public.sh

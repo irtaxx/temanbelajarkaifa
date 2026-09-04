@@ -1,6 +1,10 @@
 ---
+# Dipakai kalau tombol "Deploy HEAD Commit" di cPanel Git Version Control aktif.
+# Cache dibersihkan lebih dulu supaya route & config terbaru langsung berlaku,
+# dan sengaja tidak di-cache ulang (cache route basi pernah membuat Edit/Hapus
+# gagal diam-diam meski kodenya sudah benar).
 deployment:
   tasks:
-    - cd /home/USERNAME/temanbelajarkaifa && $(bash scripts/find-php.sh) artisan migrate --force
     - cd /home/USERNAME/temanbelajarkaifa && $(bash scripts/find-php.sh) artisan optimize:clear
-    - cd /home/USERNAME/temanbelajarkaifa && $(bash scripts/find-php.sh) artisan optimize
+    - cd /home/USERNAME/temanbelajarkaifa && bash scripts/sync-public.sh
+    - cd /home/USERNAME/temanbelajarkaifa && $(bash scripts/find-php.sh) artisan migrate --force
