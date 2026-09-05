@@ -72,13 +72,15 @@
                                     </td>
                                     <td class="px-4 py-2.5 text-gray-600 tabular-nums">{{ $k->tahun_ajar }}</td>
                                     <td class="px-4 py-2.5 text-right text-gray-600 tabular-nums">{{ $k->jumlah_siswa }}</td>
-                                    <td class="px-4 py-2.5 text-right space-x-2 whitespace-nowrap">
-                                        <a href="{{ route('kelas.show', $k) }}" class="text-indigo-600 hover:underline">Detail</a>
-                                        <button type="button" x-data x-on:click="$dispatch('open-modal', 'edit-kelas-{{ $k->id }}')" class="text-indigo-600 hover:underline">Edit</button>
-                                        <form action="{{ route('kelas.destroy', $k) }}" method="POST" class="inline" onsubmit="return confirm('Hapus kelas {{ $k->nama_kelas }}?');">
-                                            @csrf @method('DELETE')
-                                            <button type="submit" class="text-red-600 hover:underline">Hapus</button>
-                                        </form>
+                                    <td class="px-4 py-2.5">
+                                        <div class="flex items-center justify-end gap-1.5 whitespace-nowrap">
+                                            <x-action-button variant="utama" :href="route('kelas.show', $k)">Detail</x-action-button>
+                                            <x-action-button x-data x-on:click="$dispatch('open-modal', 'edit-kelas-{{ $k->id }}')">Edit</x-action-button>
+                                            <form action="{{ route('kelas.destroy', $k) }}" method="POST" onsubmit="return confirm('Hapus kelas {{ $k->nama_kelas }}?');">
+                                                @csrf @method('DELETE')
+                                                <x-action-button type="submit" variant="bahaya">Hapus</x-action-button>
+                                            </form>
+                                        </div>
                                     </td>
                                 </tr>
                             @empty

@@ -77,9 +77,16 @@ class PenggajianController extends Controller
     /**
      * Menentukan rentang tanggal rekap dari parameter query.
      *
-     * mode=bulan    : satu bulan (bulan, tahun)
-     * mode=rentang  : beberapa bulan (dari_bulan/dari_tahun s.d. sampai_bulan/sampai_tahun)
+     * mode=bulan    : satu periode gaji (bulan, tahun)
+     * mode=rentang  : beberapa periode gaji (dari_bulan/dari_tahun s.d. sampai_bulan/sampai_tahun)
      * mode=semester : mengikuti tanggal mulai & selesai semester terpilih
+     *
+     * Periode gaji satu bulan tidak mengikuti kalender: gaji bulan X dihitung dari
+     * tanggal 15 bulan sebelumnya sampai tanggal 14 bulan X. Misalnya gaji Agustus
+     * 2026 mencakup 15 Juli 2026 – 14 Agustus 2026.
+     *
+     * Mode semester sengaja memakai tanggal apa adanya dari data semester, karena
+     * tanggal itu diisi sendiri oleh admin.
      */
     private function periode(Request $request): array
     {
@@ -112,19 +119,23 @@ class PenggajianController extends Controller
             $sampaiBulan = $this->angka($request->query('sampai_bulan'), 1, 12, (int) now()->month);
             $sampaiTahun = $this->angka($request->query('sampai_tahun'), 2000, 2100, (int) now()->year);
 
-            $mulai = Carbon::create($dariTahun, $dariBulan, 1)->startOfMonth();
-            $selesai = Carbon::create($sampaiTahun, $sampaiBulan, 1)->endOfMonth();
-
-            // Kalau terbalik, tukar supaya rentangnya tetap masuk akal.
-            if ($selesai->lt($mulai)) {
-                [$mulai, $selesai] = [$selesai->copy()->startOfMonth(), $mulai->copy()->endOfMonth()];
+            // Kalau terbalik, tukar dulu supaya rentangnya tetap masuk akal.
+            $awal = Carbon::create($dariTahun, $dariBulan, 1);
+            $akhir = Carbon::create($sampaiTahun, $sampaiBulan, 1);
+            if ($akhir->lt($awal)) {
+                [$awal, $akhir] = [$akhir, $awal];
+                [$dariBulan, $dariTahun, $sampaiBulan, $sampaiTahun] =
+                    [$sampaiBulan, $sampaiTahun, $dariBulan, $dariTahun];
             }
+
+            $mulai = $this->awalPeriodeGaji($dariTahun, $dariBulan);
+            $selesai = $this->akhirPeriodeGaji($sampaiTahun, $sampaiBulan);
 
             return [
                 'mode' => 'rentang',
                 'mulai' => $mulai,
                 'selesai' => $selesai,
-                'label' => $mulai->translatedFormat('F Y').' – '.$selesai->translatedFormat('F Y'),
+                'label' => 'Gaji '.$awal->translatedFormat('F Y').' – '.$akhir->translatedFormat('F Y'),
                 'dari_bulan' => $dariBulan,
                 'dari_tahun' => $dariTahun,
                 'sampai_bulan' => $sampaiBulan,
@@ -137,17 +148,28 @@ class PenggajianController extends Controller
 
         $bulan = $this->angka($request->query('bulan'), 1, 12, (int) now()->month);
         $tahun = $this->angka($request->query('tahun'), 2000, 2100, (int) now()->year);
-        $mulai = Carbon::create($tahun, $bulan, 1)->startOfMonth();
 
         return [
             'mode' => 'bulan',
-            'mulai' => $mulai,
-            'selesai' => $mulai->copy()->endOfMonth(),
-            'label' => $mulai->translatedFormat('F Y'),
+            'mulai' => $this->awalPeriodeGaji($tahun, $bulan),
+            'selesai' => $this->akhirPeriodeGaji($tahun, $bulan),
+            'label' => 'Gaji '.Carbon::create($tahun, $bulan, 1)->translatedFormat('F Y'),
             'bulan' => $bulan,
             'tahun' => $tahun,
             'semester_id' => null,
         ] + $this->paramRentangDefault();
+    }
+
+    /** Tanggal 15 bulan sebelumnya. */
+    private function awalPeriodeGaji(int $tahun, int $bulan): Carbon
+    {
+        return Carbon::create($tahun, $bulan, 15)->subMonthNoOverflow()->startOfDay();
+    }
+
+    /** Tanggal 14 pada bulan gaji itu sendiri. */
+    private function akhirPeriodeGaji(int $tahun, int $bulan): Carbon
+    {
+        return Carbon::create($tahun, $bulan, 14)->endOfDay();
     }
 
     private function paramBulanDefault(): array

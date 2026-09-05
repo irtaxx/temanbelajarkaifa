@@ -86,12 +86,14 @@
                                     <td class="px-4 py-2.5 text-gray-600 tabular-nums">{{ substr($j->jam_mulai, 0, 5) }}–{{ substr($j->jam_selesai, 0, 5) }}</td>
                                     <td class="px-4 py-2.5 font-medium text-gray-900">{{ $j->guru->nama }}</td>
                                     <td class="px-4 py-2.5 text-gray-600">{{ $j->mapel ?? '-' }}</td>
-                                    <td class="px-4 py-2.5 text-right whitespace-nowrap">
-                                        <form action="{{ route('jadwals.destroy', $j) }}" method="POST" class="inline" onsubmit="return confirm('Hapus jadwal ini?');">
-                                            @csrf @method('DELETE')
-                                            <input type="hidden" name="dari_kelas" value="{{ $kelas->id }}">
-                                            <button type="submit" class="text-red-600 hover:underline">Hapus</button>
-                                        </form>
+                                    <td class="px-4 py-2.5">
+                                        <div class="flex items-center justify-end whitespace-nowrap">
+                                            <form action="{{ route('jadwals.destroy', $j) }}" method="POST" onsubmit="return confirm('Hapus jadwal ini?');">
+                                                @csrf @method('DELETE')
+                                                <input type="hidden" name="dari_kelas" value="{{ $kelas->id }}">
+                                                <x-action-button type="submit" variant="bahaya">Hapus</x-action-button>
+                                            </form>
+                                        </div>
                                     </td>
                                 </tr>
                             @empty

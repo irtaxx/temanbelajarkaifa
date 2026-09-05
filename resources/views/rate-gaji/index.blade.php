@@ -70,12 +70,14 @@
                                     <td class="px-4 py-2.5 font-medium text-gray-900">{{ $rate->jenjang }}</td>
                                     <td class="px-4 py-2.5 text-gray-600 tabular-nums">{{ $rate->min_siswa }}–{{ $rate->max_siswa }} siswa</td>
                                     <td class="px-4 py-2.5 text-right text-gray-900 tabular-nums">Rp{{ number_format($rate->rate_per_sesi, 0, ',', '.') }}</td>
-                                    <td class="px-4 py-2.5 text-right space-x-2 whitespace-nowrap">
-                                        <button type="button" x-data x-on:click="$dispatch('open-modal', 'edit-rate-{{ $rate->id }}')" class="text-indigo-600 hover:underline">Edit</button>
-                                        <form action="{{ route('rate-gaji.destroy', $rate) }}" method="POST" class="inline" onsubmit="return confirm('Hapus rate ini?');">
-                                            @csrf @method('DELETE')
-                                            <button type="submit" class="text-red-600 hover:underline">Hapus</button>
-                                        </form>
+                                    <td class="px-4 py-2.5">
+                                        <div class="flex items-center justify-end gap-1.5 whitespace-nowrap">
+                                            <x-action-button x-data x-on:click="$dispatch('open-modal', 'edit-rate-{{ $rate->id }}')">Edit</x-action-button>
+                                            <form action="{{ route('rate-gaji.destroy', $rate) }}" method="POST" onsubmit="return confirm('Hapus rate ini?');">
+                                                @csrf @method('DELETE')
+                                                <x-action-button type="submit" variant="bahaya">Hapus</x-action-button>
+                                            </form>
+                                        </div>
                                     </td>
                                 </tr>
                             @empty

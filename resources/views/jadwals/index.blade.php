@@ -41,12 +41,14 @@
                                         <span class="text-gray-400">· {{ $j->kelas->semester }} {{ $j->kelas->tahun_ajar }}</span>
                                     </td>
                                     <td class="px-4 py-2.5 text-gray-600">{{ $j->mapel ?? '-' }}</td>
-                                    <td class="px-4 py-2.5 text-right space-x-2 whitespace-nowrap">
-                                        <button type="button" x-data x-on:click="$dispatch('open-modal', 'edit-jadwal-{{ $j->id }}')" class="text-indigo-600 hover:underline">Edit</button>
-                                        <form action="{{ route('jadwals.destroy', $j) }}" method="POST" class="inline" onsubmit="return confirm('Hapus jadwal ini?');">
-                                            @csrf @method('DELETE')
-                                            <button type="submit" class="text-red-600 hover:underline">Hapus</button>
-                                        </form>
+                                    <td class="px-4 py-2.5">
+                                        <div class="flex items-center justify-end gap-1.5 whitespace-nowrap">
+                                            <x-action-button x-data x-on:click="$dispatch('open-modal', 'edit-jadwal-{{ $j->id }}')">Edit</x-action-button>
+                                            <form action="{{ route('jadwals.destroy', $j) }}" method="POST" onsubmit="return confirm('Hapus jadwal ini?');">
+                                                @csrf @method('DELETE')
+                                                <x-action-button type="submit" variant="bahaya">Hapus</x-action-button>
+                                            </form>
+                                        </div>
                                     </td>
                                 </tr>
                             @empty

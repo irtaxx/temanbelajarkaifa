@@ -173,8 +173,10 @@
                                     <td class="px-4 py-2.5 text-right text-gray-900 tabular-nums">Rp{{ number_format($guru->total_gaji ?? 0, 0, ',', '.') }}</td>
                                     <td class="px-4 py-2.5 text-right text-gray-500 tabular-nums">Rp{{ number_format($guru->tabungan, 0, ',', '.') }}</td>
                                     <td class="px-4 py-2.5 text-right font-semibold text-gray-900 tabular-nums">Rp{{ number_format($guru->gaji_diterima, 0, ',', '.') }}</td>
-                                    <td class="px-4 py-2.5 text-right whitespace-nowrap">
-                                        <a href="{{ route('penggajian.detail', ['guru' => $guru->id] + $paramPeriode) }}" class="text-indigo-600 hover:underline">Detail</a>
+                                    <td class="px-4 py-2.5">
+                                        <div class="flex items-center justify-end whitespace-nowrap">
+                                            <x-action-button variant="utama" :href="route('penggajian.detail', ['guru' => $guru->id] + $paramPeriode)">Detail</x-action-button>
+                                        </div>
                                     </td>
                                 </tr>
                             @empty

@@ -40,12 +40,14 @@
                                             'bg-gray-100 text-gray-600' => $guru->status !== 'aktif',
                                         ])>{{ ucfirst($guru->status) }}</span>
                                     </td>
-                                    <td class="px-4 py-2.5 text-right space-x-2 whitespace-nowrap">
-                                        <button type="button" x-data x-on:click="$dispatch('open-modal', 'edit-guru-{{ $guru->id }}')" class="text-indigo-600 hover:underline">Edit</button>
-                                        <form action="{{ route('gurus.destroy', $guru) }}" method="POST" class="inline" onsubmit="return confirm('Hapus data guru {{ $guru->nama }}?');">
-                                            @csrf @method('DELETE')
-                                            <button type="submit" class="text-red-600 hover:underline">Hapus</button>
-                                        </form>
+                                    <td class="px-4 py-2.5">
+                                        <div class="flex items-center justify-end gap-1.5 whitespace-nowrap">
+                                            <x-action-button x-data x-on:click="$dispatch('open-modal', 'edit-guru-{{ $guru->id }}')">Edit</x-action-button>
+                                            <form action="{{ route('gurus.destroy', $guru) }}" method="POST" onsubmit="return confirm('Hapus data guru {{ $guru->nama }}?');">
+                                                @csrf @method('DELETE')
+                                                <x-action-button type="submit" variant="bahaya">Hapus</x-action-button>
+                                            </form>
+                                        </div>
                                     </td>
                                 </tr>
                             @empty

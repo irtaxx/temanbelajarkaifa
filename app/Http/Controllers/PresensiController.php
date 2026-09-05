@@ -6,6 +6,7 @@ use App\Models\Guru;
 use App\Models\Jadwal;
 use App\Models\Pengaturan;
 use App\Models\Presensi;
+use App\Models\Semester;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -30,19 +31,33 @@ class PresensiController extends Controller
         //
         // whereDate dipakai karena kolom tanggal tersimpan dengan komponen jam (00:00:00),
         // sehingga perbandingan string biasa tidak cocok di SQLite.
-        $jadwals = Jadwal::with(['guru', 'kelas', 'presensis' => fn ($q) => $q->whereDate('tanggal', $tanggal)])
+        $sesuaiHari = Jadwal::with(['guru', 'kelas', 'presensis' => fn ($q) => $q->whereDate('tanggal', $tanggal)])
             ->where('hari', $hari)
             ->when($filterGuru !== '', fn ($q) => $q->where('guru_id', $filterGuru))
             ->orderBy('jam_mulai')
             ->get();
 
-        $gurus = Guru::where('status', 'aktif')->orderBy('nama')->get();
+        // Kelas hanya berjalan di dalam rentang semesternya. Penyaringan dilakukan di
+        // PHP (bukan query) supaya jadwal yang tersembunyi tetap bisa dihitung dan
+        // alasannya bisa dijelaskan ke admin — daripada halaman kosong tanpa keterangan.
+        $rentangSemester = Semester::all()
+            ->keyBy(fn (Semester $s) => $s->nama.'|'.$s->tahun_ajar);
+
+        $jadwals = $sesuaiHari->filter(function (Jadwal $j) use ($rentangSemester, $tanggalCarbon) {
+            $semester = $rentangSemester->get($j->kelas->semester.'|'.$j->kelas->tahun_ajar);
+
+            return $semester
+                && $tanggalCarbon->betweenIncluded($semester->tanggal_mulai, $semester->tanggal_selesai);
+        })->values();
+
+        $jumlahDiluarSemester = $sesuaiHari->count() - $jadwals->count();
 
         return view('presensi.index', [
             'jadwals' => $jadwals,
+            'jumlahDiluarSemester' => $jumlahDiluarSemester,
             'tanggal' => $tanggal,
             'hari' => $hari,
-            'gurus' => $gurus,
+            'gurus' => Guru::where('status', 'aktif')->orderBy('nama')->get(),
             'filterGuru' => $filterGuru,
             'bonusGabungan' => Pengaturan::ambil(Pengaturan::BONUS_KELAS_GABUNGAN),
             'nominalSiswaAbsen' => Pengaturan::ambil(Pengaturan::NOMINAL_SISWA_ABSEN),

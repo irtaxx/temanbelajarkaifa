@@ -38,8 +38,16 @@
 
             <p class="text-sm text-gray-500 mb-4">
                 {{ \Carbon\Carbon::parse($tanggal)->translatedFormat('l, d F Y') }}
-                <span class="text-gray-400">— menampilkan jadwal hari {{ $hari === 'Jumat' ? "Jum'at" : $hari }}.</span>
+                <span class="text-gray-400">— menampilkan jadwal hari {{ $hari === 'Jumat' ? "Jum'at" : $hari }} yang semesternya sedang berjalan.</span>
             </p>
+
+            @if ($jumlahDiluarSemester > 0 && $jadwals->isNotEmpty())
+                <div class="mb-4 px-4 py-3 rounded-lg bg-amber-50 border border-amber-200 text-amber-800 text-sm">
+                    {{ $jumlahDiluarSemester }} jadwal lain pada hari ini disembunyikan karena tanggalnya
+                    di luar rentang semester kelas tersebut.
+                    <a href="{{ route('semesters.index') }}" class="font-medium underline">Cek rentang semester</a>
+                </div>
+            @endif
 
             <div class="space-y-3">
                 @forelse ($jadwals as $j)
@@ -126,8 +134,14 @@
                     </div>
                 @empty
                     <div class="bg-white border border-gray-100 rounded-xl p-6 text-center text-gray-500">
-                        Tidak ada jadwal mengajar pada hari {{ $hari === 'Jumat' ? "Jum'at" : $hari }}.
-                        <a href="{{ route('jadwals.index') }}" class="text-indigo-600 hover:underline">Atur jadwal</a>
+                        @if ($jumlahDiluarSemester > 0)
+                            Ada {{ $jumlahDiluarSemester }} jadwal hari {{ $hari === 'Jumat' ? "Jum'at" : $hari }},
+                            tapi tanggal ini di luar rentang semester kelasnya.
+                            <a href="{{ route('semesters.index') }}" class="text-indigo-600 hover:underline">Cek rentang semester</a>
+                        @else
+                            Tidak ada jadwal mengajar pada hari {{ $hari === 'Jumat' ? "Jum'at" : $hari }}.
+                            <a href="{{ route('jadwals.index') }}" class="text-indigo-600 hover:underline">Atur jadwal</a>
+                        @endif
                     </div>
                 @endforelse
             </div>
