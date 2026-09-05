@@ -16,6 +16,7 @@ class RateGajiController extends Controller
             'rates' => $rates,
             'bonusGabungan' => Pengaturan::ambil(Pengaturan::BONUS_KELAS_GABUNGAN),
             'nominalSiswaAbsen' => Pengaturan::ambil(Pengaturan::NOMINAL_SISWA_ABSEN),
+            'persenTabungan' => Pengaturan::ambil(Pengaturan::PERSEN_TABUNGAN, 10),
         ]);
     }
 
@@ -24,10 +25,12 @@ class RateGajiController extends Controller
         $data = $request->validate([
             'bonus_kelas_gabungan' => ['required', 'integer', 'min:0'],
             'nominal_siswa_absen' => ['required', 'integer', 'min:0'],
+            'persen_tabungan' => ['required', 'integer', 'min:0', 'max:100'],
         ]);
 
         Pengaturan::simpan(Pengaturan::BONUS_KELAS_GABUNGAN, $data['bonus_kelas_gabungan']);
         Pengaturan::simpan(Pengaturan::NOMINAL_SISWA_ABSEN, $data['nominal_siswa_absen']);
+        Pengaturan::simpan(Pengaturan::PERSEN_TABUNGAN, $data['persen_tabungan']);
 
         return redirect()->route('rate-gaji.index')
             ->with('status', 'Pengaturan nominal berhasil disimpan. Presensi yang sudah tercatat tidak ikut berubah.');

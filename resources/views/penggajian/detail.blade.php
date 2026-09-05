@@ -1,15 +1,42 @@
+@php
+    $paramPeriode = collect([
+        'mode' => $periode['mode'],
+        'bulan' => $periode['bulan'],
+        'tahun' => $periode['tahun'],
+        'dari_bulan' => $periode['dari_bulan'],
+        'dari_tahun' => $periode['dari_tahun'],
+        'sampai_bulan' => $periode['sampai_bulan'],
+        'sampai_tahun' => $periode['sampai_tahun'],
+        'semester_id' => $periode['semester_id'],
+    ])->filter(fn ($v) => $v !== null)->all();
+@endphp
+
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Detail Gaji — {{ $guru->nama }} ({{ \Carbon\Carbon::create()->month($bulan)->translatedFormat('F') }} {{ $tahun }})
-        </h2>
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">Detail Gaji — {{ $guru->nama }}</h2>
+        <p class="text-sm text-gray-500 mt-0.5">{{ $periode['label'] }}</p>
     </x-slot>
 
     <div class="py-5 px-5 lg:px-7">
         <div>
-            <a href="{{ route('penggajian.index', ['bulan' => $bulan, 'tahun' => $tahun]) }}" class="text-sm text-indigo-600 hover:underline">&larr; Kembali ke rekap</a>
+            <a href="{{ route('penggajian.index', $paramPeriode) }}" class="text-sm text-indigo-600 hover:underline">&larr; Kembali ke rekap</a>
 
-            <div class="bg-white border border-gray-100 rounded-xl overflow-hidden mt-4">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4 mb-4">
+                <div class="bg-white border border-gray-100 rounded-xl p-3.5">
+                    <div class="text-xs text-gray-500 mb-1">Total gaji</div>
+                    <div class="font-display font-bold text-xl text-gray-900 tabular-nums">Rp{{ number_format($total, 0, ',', '.') }}</div>
+                </div>
+                <div class="bg-white border border-gray-100 rounded-xl p-3.5">
+                    <div class="text-xs text-gray-500 mb-1">Tabungan ({{ $persenTabungan }}%)</div>
+                    <div class="font-display font-bold text-xl text-gray-900 tabular-nums">Rp{{ number_format($tabungan, 0, ',', '.') }}</div>
+                </div>
+                <div class="bg-white border border-gray-100 rounded-xl p-3.5" style="background:#F1F5FF;">
+                    <div class="text-xs text-gray-600 mb-1">Gaji diterima</div>
+                    <div class="font-display font-bold text-xl text-gray-900 tabular-nums">Rp{{ number_format($diterima, 0, ',', '.') }}</div>
+                </div>
+            </div>
+
+            <div class="bg-white border border-gray-100 rounded-xl overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="min-w-full text-sm">
                         <thead>
@@ -43,8 +70,16 @@
                         </tbody>
                         <tfoot class="bg-gray-50">
                             <tr>
-                                <td colspan="3" class="px-4 py-3 text-right font-semibold text-gray-700">Total</td>
-                                <td class="px-4 py-3 text-right font-semibold text-gray-900 tabular-nums">Rp{{ number_format($total, 0, ',', '.') }}</td>
+                                <td colspan="3" class="px-4 py-2.5 text-right text-gray-600">Total gaji</td>
+                                <td class="px-4 py-2.5 text-right text-gray-900 tabular-nums">Rp{{ number_format($total, 0, ',', '.') }}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="3" class="px-4 py-2.5 text-right text-gray-600">Tabungan ({{ $persenTabungan }}%)</td>
+                                <td class="px-4 py-2.5 text-right text-gray-600 tabular-nums">− Rp{{ number_format($tabungan, 0, ',', '.') }}</td>
+                            </tr>
+                            <tr class="border-t border-gray-200">
+                                <td colspan="3" class="px-4 py-3 text-right font-semibold text-gray-700">Gaji diterima</td>
+                                <td class="px-4 py-3 text-right font-semibold text-gray-900 tabular-nums">Rp{{ number_format($diterima, 0, ',', '.') }}</td>
                             </tr>
                         </tfoot>
                     </table>

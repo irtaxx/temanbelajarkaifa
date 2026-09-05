@@ -1,6 +1,9 @@
 @php
     $jadwal = $jadwal ?? null;
     $modalName = $modalName ?? null;
+    // Diisi saat form dibuka dari halaman detail kelas: kelasnya sudah pasti,
+    // jadi tidak perlu dipilih lagi (kelas_id dikirim lewat input tersembunyi).
+    $kelasTerkunci = $kelasTerkunci ?? null;
     $aktif = $modalName !== null && old('_modal') === $modalName;
     $nilai = fn (string $field, $default = '') => $aktif ? old($field, $default) : $default;
     $galat = fn (string $field) => $aktif ? $errors->first($field) : null;
@@ -19,12 +22,19 @@
 
 <div>
     <label class="block text-sm font-medium text-gray-700">Kelas</label>
-    <select name="kelas_id" class="mt-1.5 block w-full border-gray-300 shadow-sm">
-        <option value="">-- Pilih Kelas --</option>
-        @foreach ($kelas as $k)
-            <option value="{{ $k->id }}" @selected($nilai('kelas_id', $jadwal->kelas_id ?? '') == $k->id)>{{ $k->nama_kelas }} ({{ $k->jenjang }} · {{ $k->semester }} {{ $k->tahun_ajar }} · {{ $k->jumlah_siswa }} siswa)</option>
-        @endforeach
-    </select>
+    @if ($kelasTerkunci)
+        <p class="mt-1.5 px-3.5 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-lg text-gray-700">
+            {{ $kelasTerkunci->nama_kelas }}
+            <span class="text-gray-500">({{ $kelasTerkunci->jenjang }} · {{ $kelasTerkunci->semester }} {{ $kelasTerkunci->tahun_ajar }} · {{ $kelasTerkunci->jumlah_siswa }} siswa)</span>
+        </p>
+    @else
+        <select name="kelas_id" class="mt-1.5 block w-full border-gray-300 shadow-sm">
+            <option value="">-- Pilih Kelas --</option>
+            @foreach ($kelas as $k)
+                <option value="{{ $k->id }}" @selected($nilai('kelas_id', $jadwal->kelas_id ?? '') == $k->id)>{{ $k->nama_kelas }} ({{ $k->jenjang }} · {{ $k->semester }} {{ $k->tahun_ajar }} · {{ $k->jumlah_siswa }} siswa)</option>
+            @endforeach
+        </select>
+    @endif
     @if ($pesan = $galat('kelas_id')) <p class="mt-1 text-sm text-red-600">{{ $pesan }}</p> @endif
 </div>
 

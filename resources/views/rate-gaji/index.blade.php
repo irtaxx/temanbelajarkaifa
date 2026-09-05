@@ -41,6 +41,12 @@
                             class="border-gray-300 shadow-sm">
                         @error('nominal_siswa_absen') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
+                    <div class="w-52">
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Potongan tabungan (%)</label>
+                        <input type="number" min="0" max="100" name="persen_tabungan" value="{{ old('persen_tabungan', $persenTabungan) }}" required
+                            class="border-gray-300 shadow-sm">
+                        @error('persen_tabungan') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                    </div>
                     <button type="submit" class="px-4 py-2.5 bg-gray-800 text-white text-sm font-medium rounded-lg hover:bg-gray-700">
                         Simpan
                     </button>

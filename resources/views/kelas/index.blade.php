@@ -57,7 +57,11 @@
                         <tbody>
                             @forelse ($kelas as $k)
                                 <tr class="border-b border-gray-100 last:border-b-0">
-                                    <td class="px-4 py-2.5 font-medium text-gray-900">{{ $k->nama_kelas }}</td>
+                                    <td class="px-4 py-2.5">
+                                        <a href="{{ route('kelas.show', $k) }}" class="font-medium text-gray-900 hover:text-indigo-600 hover:underline">
+                                            {{ $k->nama_kelas }}
+                                        </a>
+                                    </td>
                                     <td class="px-4 py-2.5 text-gray-600">{{ $k->jenjang }}</td>
                                     <td class="px-4 py-2.5">
                                         <span @class([
@@ -69,6 +73,7 @@
                                     <td class="px-4 py-2.5 text-gray-600 tabular-nums">{{ $k->tahun_ajar }}</td>
                                     <td class="px-4 py-2.5 text-right text-gray-600 tabular-nums">{{ $k->jumlah_siswa }}</td>
                                     <td class="px-4 py-2.5 text-right space-x-2 whitespace-nowrap">
+                                        <a href="{{ route('kelas.show', $k) }}" class="text-indigo-600 hover:underline">Detail</a>
                                         <button type="button" x-data x-on:click="$dispatch('open-modal', 'edit-kelas-{{ $k->id }}')" class="text-indigo-600 hover:underline">Edit</button>
                                         <form action="{{ route('kelas.destroy', $k) }}" method="POST" class="inline" onsubmit="return confirm('Hapus kelas {{ $k->nama_kelas }}?');">
                                             @csrf @method('DELETE')

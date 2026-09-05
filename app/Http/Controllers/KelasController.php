@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Guru;
 use App\Models\Kelas;
+use App\Models\RateGaji;
 use Illuminate\Http\Request;
 
 class KelasController extends Controller
@@ -29,6 +31,21 @@ class KelasController extends Controller
             ->pluck('tahun_ajar');
 
         return view('kelas.index', compact('kelas', 'daftarTahunAjar', 'filterTahunAjar', 'filterSemester'));
+    }
+
+    public function show(Kelas $kelas)
+    {
+        $kelas->load(['jadwals' => fn ($q) => $q
+            ->with('guru')
+            ->orderByRaw("CASE hari WHEN 'Senin' THEN 1 WHEN 'Selasa' THEN 2 WHEN 'Rabu' THEN 3 WHEN 'Kamis' THEN 4 WHEN 'Jumat' THEN 5 WHEN 'Sabtu' THEN 6 ELSE 7 END")
+            ->orderBy('jam_mulai'),
+        ]);
+
+        return view('kelas.show', [
+            'kelas' => $kelas,
+            'gurus' => Guru::where('status', 'aktif')->orderBy('nama')->get(),
+            'rate' => RateGaji::cariRate($kelas->jenjang, $kelas->jumlah_siswa),
+        ]);
     }
 
     public function store(Request $request)

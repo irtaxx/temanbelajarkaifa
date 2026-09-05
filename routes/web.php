@@ -8,6 +8,7 @@ use App\Http\Controllers\PenggajianController;
 use App\Http\Controllers\PresensiController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RateGajiController;
+use App\Http\Controllers\SemesterController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -29,8 +30,9 @@ Route::middleware('auth')->group(function () {
     Route::resource('gurus', GuruController::class)->only(['index', 'store', 'update', 'destroy']);
     Route::resource('kelas', KelasController::class)
         ->parameters(['kelas' => 'kelas'])
-        ->only(['index', 'store', 'update', 'destroy']);
+        ->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::resource('jadwals', JadwalController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::resource('semesters', SemesterController::class)->only(['index', 'store', 'update', 'destroy']);
     Route::post('/rate-gaji/pengaturan', [RateGajiController::class, 'simpanPengaturan'])->name('rate-gaji.pengaturan');
     Route::resource('rate-gaji', RateGajiController::class)
         ->parameters(['rate-gaji' => 'rateGaji'])

@@ -24,16 +24,15 @@ class PresensiController extends Controller
         $hari = self::HARI_INDONESIA[$tanggalCarbon->dayOfWeek];
         $filterGuru = $request->query('guru_id', '');
 
+        // Hanya jadwal yang harinya cocok dengan tanggal terpilih. Admin tetap bebas
+        // memilih tanggal mana pun (lampau atau mendatang), tapi daftarnya mengikuti
+        // jadwal hari itu supaya tidak tercampur sesi hari lain.
+        //
         // whereDate dipakai karena kolom tanggal tersimpan dengan komponen jam (00:00:00),
         // sehingga perbandingan string biasa tidak cocok di SQLite.
-        //
-        // Semua jadwal ditampilkan, tidak dibatasi hari terjadwalnya — admin bebas mencatat
-        // sesi yang benar-benar berlangsung pada tanggal mana pun. Jadwal yang memang
-        // terjadwal di hari tersebut ditaruh paling atas.
         $jadwals = Jadwal::with(['guru', 'kelas', 'presensis' => fn ($q) => $q->whereDate('tanggal', $tanggal)])
+            ->where('hari', $hari)
             ->when($filterGuru !== '', fn ($q) => $q->where('guru_id', $filterGuru))
-            ->orderByRaw('CASE WHEN hari = ? THEN 0 ELSE 1 END', [$hari])
-            ->orderByRaw("CASE hari WHEN 'Senin' THEN 1 WHEN 'Selasa' THEN 2 WHEN 'Rabu' THEN 3 WHEN 'Kamis' THEN 4 WHEN 'Jumat' THEN 5 WHEN 'Sabtu' THEN 6 ELSE 7 END")
             ->orderBy('jam_mulai')
             ->get();
 

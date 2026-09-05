@@ -12,6 +12,7 @@ class Pengaturan extends Model
 
     public const BONUS_KELAS_GABUNGAN = 'bonus_kelas_gabungan';
     public const NOMINAL_SISWA_ABSEN = 'nominal_siswa_absen';
+    public const PERSEN_TABUNGAN = 'persen_tabungan';
 
     /** Cache per-request; nilai pengaturan dibaca berulang saat merender halaman presensi. */
     private static ?array $cache = null;

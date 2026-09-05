@@ -8,12 +8,16 @@
             ['route' => 'jadwals.index', 'pattern' => ['jadwals.*'], 'label' => 'Jadwal', 'icon' => 'cal', 'color' => '#EF8A1E'],
             ['route' => 'gurus.index', 'pattern' => ['gurus.*'], 'label' => 'Guru', 'icon' => 'user', 'color' => '#2AA152'],
             ['route' => 'kelas.index', 'pattern' => ['kelas.*'], 'label' => 'Kelas', 'icon' => 'book', 'color' => '#28A9D6'],
+            ['route' => 'semesters.index', 'pattern' => ['semesters.*'], 'label' => 'Semester', 'icon' => 'cal', 'color' => '#F2BC2B'],
         ],
         'Keuangan' => [
             ['route' => 'penggajian.index', 'pattern' => ['penggajian.*', 'rate-gaji.*'], 'label' => 'Penggajian', 'icon' => 'wallet', 'color' => '#C77CD1'],
         ],
     ];
-    $mobileItems = collect($navGroups)->flatten(1)->reject(fn ($item) => $item['route'] === 'dashboard');
+    // Bottom nav mobile dibatasi menu yang sering dipakai; Dashboard lewat logo,
+    // Semester jarang disentuh dan tetap tersedia di sidebar desktop.
+    $mobileItems = collect($navGroups)->flatten(1)
+        ->reject(fn ($item) => in_array($item['route'], ['dashboard', 'semesters.index'], true));
 @endphp
 
 {{-- Desktop sidebar --}}

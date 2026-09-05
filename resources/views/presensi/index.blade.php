@@ -38,7 +38,7 @@
 
             <p class="text-sm text-gray-500 mb-4">
                 {{ \Carbon\Carbon::parse($tanggal)->translatedFormat('l, d F Y') }}
-                <span class="text-gray-400">— sesi bisa ditandai kapan saja, tidak terbatas hari terjadwalnya.</span>
+                <span class="text-gray-400">— menampilkan jadwal hari {{ $hari === 'Jumat' ? "Jum'at" : $hari }}.</span>
             </p>
 
             <div class="space-y-3">
@@ -46,7 +46,6 @@
                     @php
                         $presensi = $j->presensis->first();
                         $skenarioAktif = $presensi?->skenario;
-                        $terjadwalHariIni = $j->hari === $hari;
                         $adaRate = \App\Models\RateGaji::cariRate($j->kelas->jenjang, $j->kelas->jumlah_siswa) !== null;
                     @endphp
                     <div class="bg-white border rounded-xl p-4 {{ $presensi ? 'border-gray-200' : 'border-gray-100' }}">
@@ -56,15 +55,6 @@
                                 <p class="text-sm text-gray-500">
                                     {{ $j->kelas->nama_kelas }} · {{ substr($j->jam_mulai, 0, 5) }}–{{ substr($j->jam_selesai, 0, 5) }}
                                     @if ($j->mapel) · {{ $j->mapel }} @endif
-                                </p>
-                                <p class="text-xs mt-1">
-                                    <span @class([
-                                        'px-2 py-0.5 rounded-full font-medium',
-                                        'bg-indigo-50 text-indigo-700' => $terjadwalHariIni,
-                                        'bg-gray-100 text-gray-500' => ! $terjadwalHariIni,
-                                    ])>
-                                        Jadwal {{ $j->hari === 'Jumat' ? "Jum'at" : $j->hari }}
-                                    </span>
                                 </p>
                             </div>
                             @if ($presensi)
@@ -136,7 +126,8 @@
                     </div>
                 @empty
                     <div class="bg-white border border-gray-100 rounded-xl p-6 text-center text-gray-500">
-                        Belum ada jadwal mengajar. Tambahkan dulu di menu Jadwal.
+                        Tidak ada jadwal mengajar pada hari {{ $hari === 'Jumat' ? "Jum'at" : $hari }}.
+                        <a href="{{ route('jadwals.index') }}" class="text-indigo-600 hover:underline">Atur jadwal</a>
                     </div>
                 @endforelse
             </div>

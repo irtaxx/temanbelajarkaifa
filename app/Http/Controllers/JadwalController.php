@@ -26,21 +26,36 @@ class JadwalController extends Controller
     {
         Jadwal::create($this->validated($request));
 
-        return redirect()->route('jadwals.index')->with('status', 'Jadwal berhasil ditambahkan.');
+        return $this->kembali($request, 'Jadwal berhasil ditambahkan.');
     }
 
     public function update(Request $request, Jadwal $jadwal)
     {
         $jadwal->update($this->validated($request));
 
-        return redirect()->route('jadwals.index')->with('status', 'Jadwal berhasil diperbarui.');
+        return $this->kembali($request, 'Jadwal berhasil diperbarui.');
     }
 
-    public function destroy(Jadwal $jadwal)
+    public function destroy(Request $request, Jadwal $jadwal)
     {
         $jadwal->delete();
 
-        return redirect()->route('jadwals.index')->with('status', 'Jadwal berhasil dihapus.');
+        return $this->kembali($request, 'Jadwal berhasil dihapus.');
+    }
+
+    /**
+     * Kembali ke halaman detail kelas bila aksi dimulai dari sana,
+     * selain itu kembali ke daftar jadwal.
+     */
+    private function kembali(Request $request, string $pesan)
+    {
+        $dariKelas = $request->input('dari_kelas');
+
+        $tujuan = $dariKelas
+            ? route('kelas.show', $dariKelas)
+            : route('jadwals.index');
+
+        return redirect($tujuan)->with('status', $pesan);
     }
 
     private function opsiForm(): array
